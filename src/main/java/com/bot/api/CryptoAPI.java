@@ -90,6 +90,60 @@ public class CryptoAPI {
         return "❌ Error obteniendo el top de criptomonedas.";
     }
 
+    public static String getCryptoNews() {
+        try {
+            String url = "https://api.coingecko.com/api/v3/status_updates?category=general&per_page=5";
+            Request request = new Request.Builder().url(url).build();
+            Response response = client.newCall(request).execute();
+
+            if (response.isSuccessful()) {
+                String jsonData = response.body().string();
+                JSONObject json = new JSONObject(jsonData);
+                JSONArray updates = json.getJSONArray("status_updates");
+
+                StringBuilder result = new StringBuilder("📰 **ÚLTIMAS NOTICIAS CRYPTO**\n\n");
+
+                for (int i = 0; i < Math.min(5, updates.length()); i++) {
+                    JSONObject update = updates.getJSONObject(i);
+                    String description = update.getString("description");
+                    String projectName = "";
+
+
+                    if (update.has("project") && !update.isNull("project")) {
+                        JSONObject project = update.getJSONObject("project");
+                        if (project.has("name")) {
+                            projectName = project.getString("name");
+                        }
+                    }
+
+                    String newsEmoji = getNewsEmoji(i);
+
+                    if (!projectName.isEmpty()) {
+                        result.append(String.format("%s **%s**\n%s\n\n",
+                            newsEmoji, projectName, description));
+                    } else {
+                        result.append(String.format("%s %s\n\n", newsEmoji, description));
+                    }
+                }
+
+                if (updates.length() == 0) {
+                    return "📰 No hay noticias disponibles en este momento.";
+                }
+
+                result.append("🔗 *Fuente: CoinGecko*");
+                return result.toString();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return "❌ Error obteniendo noticias crypto.";
+    }
+
+    private static String getNewsEmoji(int index) {
+        String[] emojis = {"🚀", "💎", "⚡", "🔥", "🌟"};
+        return emojis[index % emojis.length];
+    }
+
     private static String getEmojiByRank(int rank) {
         switch (rank) {
             case 1: return "🥇";
