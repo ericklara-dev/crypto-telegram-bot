@@ -44,7 +44,7 @@ public class CryptoBot extends TelegramLongPollingBot {
 
             // Comandos habilitados después de activar el bot
             if (msg.startsWith("/start")) {
-                sendText(chatId, "✅ ¡BitBeeperBot ya está activo! Usa /crypto <moneda>, /change <moneda>, /top, o /help para más info.");
+                sendText(chatId, "✅ ¡BitBeeperBot ya está activo! Usa /crypto <moneda>, /change <moneda>, /top, /news o /help para más info.");
             } else if (msg.startsWith("/crypto")) {
                 String[] parts = msg.split(" ");
                 if (parts.length < 2) {
@@ -98,7 +98,7 @@ public class CryptoBot extends TelegramLongPollingBot {
                 activeUsers.add(chatId);
                 sendStartMessage(chatId);
 
-                // Responder al callback para quitar el loading
+
                 try {
                     execute(new org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery(
                         update.getCallbackQuery().getId()));
@@ -155,6 +155,7 @@ public class CryptoBot extends TelegramLongPollingBot {
                 "💰 `/crypto bitcoin` - Precio actual\n" +
                 "📊 `/change ethereum` - Precio con cambio 24h\n" +
                 "🏆 `/top` - Top 5 criptomonedas\n" +
+                "📰 `/news` - Últimas noticias crypto\n" +
                 "📖 `/help` - Lista completa de comandos\n\n" +
                 "💡 **¡Comienza escribiendo cualquier comando!**\n" +
                 "🌟 Ejemplo: `/crypto bitcoin`";
