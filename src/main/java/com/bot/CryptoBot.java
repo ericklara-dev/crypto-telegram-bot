@@ -66,6 +66,9 @@ public class CryptoBot extends TelegramLongPollingBot {
             } else if (msg.startsWith("/top")) {
                 String result = CryptoAPI.getTopCryptos();
                 sendText(chatId, result);
+            } else if (msg.startsWith("/news")) {
+                String result = CryptoAPI.getCryptoNews();
+                sendTextWithMarkdown(chatId, result);
             } else if (msg.startsWith("/help")) {
                 String helpMessage = "📖 **AYUDA - BITBEEPERBOT**\n\n" +
                         "🔹 `/crypto <moneda>` - Precio actual\n" +
@@ -75,6 +78,8 @@ public class CryptoBot extends TelegramLongPollingBot {
                         "   Salida: 📊 BTC → $65,000 USD | Cambio 24h: 📈+2.4%\n\n" +
                         "🔹 `/top` - Top 5 criptomonedas\n" +
                         "   Muestra las 5 principales con precios y cambios\n\n" +
+                        "🔹 `/news` - Últimas noticias crypto\n" +
+                        "   Obtén las noticias más recientes del mundo cripto\n\n" +
                         "🔹 `/help` - Mostrar esta ayuda\n\n" +
                         "💡 **Monedas populares:**\n" +
                         "`bitcoin`, `ethereum`, `cardano`, `solana`, `dogecoin`";
