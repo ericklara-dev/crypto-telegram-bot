@@ -92,45 +92,46 @@ public class CryptoAPI {
 
     public static String getCryptoNews() {
         try {
-            String url = "https://api.coingecko.com/api/v3/status_updates?category=general&per_page=5";
+
+            String url = "https://min-api.cryptocompare.com/data/v2/news/?lang=ES&api_key=free_api_key";
             Request request = new Request.Builder().url(url).build();
             Response response = client.newCall(request).execute();
 
             if (response.isSuccessful()) {
                 String jsonData = response.body().string();
                 JSONObject json = new JSONObject(jsonData);
-                JSONArray updates = json.getJSONArray("status_updates");
 
-                StringBuilder result = new StringBuilder("📰 **ÚLTIMAS NOTICIAS CRYPTO**\n\n");
-
-                for (int i = 0; i < Math.min(5, updates.length()); i++) {
-                    JSONObject update = updates.getJSONObject(i);
-                    String description = update.getString("description");
-                    String projectName = "";
-
-
-                    if (update.has("project") && !update.isNull("project")) {
-                        JSONObject project = update.getJSONObject("project");
-                        if (project.has("name")) {
-                            projectName = project.getString("name");
-                        }
-                    }
-
-                    String newsEmoji = getNewsEmoji(i);
-
-                    if (!projectName.isEmpty()) {
-                        result.append(String.format("%s **%s**\n%s\n\n",
-                            newsEmoji, projectName, description));
-                    } else {
-                        result.append(String.format("%s %s\n\n", newsEmoji, description));
-                    }
+                // Verificamos que la respuesta sea exitosa
+                if (!json.getString("Response").equals("Success")) {
+                    return "❌ Error obteniendo noticias crypto.";
                 }
 
-                if (updates.length() == 0) {
+                JSONArray news = json.getJSONObject("Data").getJSONArray("News");
+
+                if (news.length() == 0) {
                     return "📰 No hay noticias disponibles en este momento.";
                 }
 
-                result.append("🔗 *Fuente: CoinGecko*");
+                StringBuilder result = new StringBuilder("📰 **ÚLTIMAS NOTICIAS CRYPTO**\n\n");
+
+                for (int i = 0; i < Math.min(5, news.length()); i++) {
+                    JSONObject article = news.getJSONObject(i);
+                    String title = article.getString("title");
+                    String body = article.getString("body");
+                    // Truncamos el cuerpo para que no sea demasiado largo
+                    if (body.length() > 100) {
+                        body = body.substring(0, 100) + "...";
+                    }
+                    String sourceName = article.getString("source");
+                    String url_link = article.getString("url");
+
+                    String newsEmoji = getNewsEmoji(i);
+
+                    result.append(String.format("%s **%s**\n%s\n\n",
+                        newsEmoji, title, body));
+                }
+
+                result.append("🔗 *Fuente: CryptoCompare*");
                 return result.toString();
             }
         } catch (Exception e) {
