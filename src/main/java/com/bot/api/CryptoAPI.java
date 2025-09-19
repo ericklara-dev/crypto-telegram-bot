@@ -92,8 +92,8 @@ public class CryptoAPI {
 
     public static String getCryptoNews() {
         try {
-
-            String url = "https://min-api.cryptocompare.com/data/v2/news/?lang=ES&api_key=free_api_key";
+            // Usamos la API de Crypto News del servicio cryptonews-api.com
+            String url = "https://cryptonews-api.com/api/v1/category?section=general&items=5&page=1&token=demo";
             Request request = new Request.Builder().url(url).build();
             Response response = client.newCall(request).execute();
 
@@ -101,43 +101,31 @@ public class CryptoAPI {
                 String jsonData = response.body().string();
                 JSONObject json = new JSONObject(jsonData);
 
-                // Verificamos que la respuesta sea exitosa
-                if (!json.getString("Response").equals("Success")) {
-                    return "❌ Error obteniendo noticias crypto.";
+                if (!json.has("data") || json.getJSONArray("data").length() == 0) {
+                    return "❌ No hay noticias disponibles en este momento.";
                 }
 
-                JSONArray news = json.getJSONObject("Data").getJSONArray("News");
-
-                if (news.length() == 0) {
-                    return "📰 No hay noticias disponibles en este momento.";
-                }
-
+                JSONArray newsArray = json.getJSONArray("data");
                 StringBuilder result = new StringBuilder("📰 **ÚLTIMAS NOTICIAS CRYPTO**\n\n");
 
-                for (int i = 0; i < Math.min(5, news.length()); i++) {
-                    JSONObject article = news.getJSONObject(i);
-                    String title = article.getString("title");
-                    String body = article.getString("body");
-                    // Truncamos el cuerpo para que no sea demasiado largo
-                    if (body.length() > 100) {
-                        body = body.substring(0, 100) + "...";
-                    }
-                    String sourceName = article.getString("source");
-                    String url_link = article.getString("url");
+                for (int i = 0; i < Math.min(5, newsArray.length()); i++) {
+                    JSONObject news = newsArray.getJSONObject(i);
+                    String title = news.getString("title");
+                    String source = news.getString("source_name");
 
                     String newsEmoji = getNewsEmoji(i);
-
-                    result.append(String.format("%s **%s**\n%s\n\n",
-                        newsEmoji, title, body));
+                    result.append(String.format("%s **%s**\n💡 Fuente: %s\n\n",
+                        newsEmoji, title, source));
                 }
 
-                result.append("🔗 *Fuente: CryptoCompare*");
+                result.append("🔗 *Datos proporcionados por Crypto News API*");
                 return result.toString();
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return "❌ Error obteniendo noticias crypto.";
+
+        return "❌ Error obteniendo noticias crypto. Intenta más tarde.";
     }
 
     private static String getNewsEmoji(int index) {
