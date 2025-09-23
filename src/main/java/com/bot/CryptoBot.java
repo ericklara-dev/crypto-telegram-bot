@@ -17,7 +17,7 @@ import java.util.Set;
 
 public class CryptoBot extends TelegramLongPollingBot {
 
-    // Set para almacenar usuarios que ya han iniciado el bot
+
     private Set<Long> activeUsers = new HashSet<>();
 
     @Override
@@ -36,13 +36,13 @@ public class CryptoBot extends TelegramLongPollingBot {
             String msg = update.getMessage().getText();
             long chatId = update.getMessage().getChatId();
 
-            // Manejo del primer contacto con el bot - mostrar mensaje de bienvenida
+
             if (!activeUsers.contains(chatId)) {
                 sendWelcomeMessage(chatId);
                 return;
             }
 
-            // Comandos habilitados después de activar el bot
+
             if (msg.startsWith("/start")) {
                 sendText(chatId, "✅ ¡BitBeeperBot ya está activo! Usa /crypto <moneda>, /change <moneda>, /top, /news o /help para más info.");
             } else if (msg.startsWith("/crypto")) {
