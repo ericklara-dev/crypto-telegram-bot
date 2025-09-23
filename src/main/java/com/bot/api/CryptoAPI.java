@@ -92,7 +92,7 @@ public class CryptoAPI {
 
     public static String getCryptoNews() {
         try {
-            // Usamos la API de Crypto News del servicio cryptonews-api.com
+
             String url = "https://cryptonews-api.com/api/v1/category?section=general&items=5&page=1&token=demo";
             Request request = new Request.Builder().url(url).build();
             Response response = client.newCall(request).execute();
