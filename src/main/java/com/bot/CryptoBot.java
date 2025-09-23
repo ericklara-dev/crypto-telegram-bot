@@ -128,7 +128,7 @@ public class CryptoBot extends TelegramLongPollingBot {
 
         message.setText(welcomeText);
 
-        // Crear botón inline "Iniciar"
+
         InlineKeyboardMarkup keyboard = new InlineKeyboardMarkup();
         List<List<InlineKeyboardButton>> rows = new ArrayList<>();
         List<InlineKeyboardButton> row = new ArrayList<>();
